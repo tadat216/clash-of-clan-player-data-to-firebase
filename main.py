@@ -107,4 +107,4 @@ async def update_database():
     print("Đã cập nhật thành công!")
 
 if __name__ == "__main__":
-    update_database()
+    asyncio.run(update_database())
