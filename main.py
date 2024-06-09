@@ -60,6 +60,7 @@ def get_player_data(tag):
 
 def add_player_data_to_firebase(tag:str):
     p = get_player_data(tag)
+    print(p)
     player = Player(p["tag"], p["name"], p["trophies"], p["league"]["name"], datetime.now())
     doc_ref = db.collection('players').document(player.tag)
     doc = doc_ref.get()
