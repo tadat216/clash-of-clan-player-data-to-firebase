@@ -20,7 +20,9 @@ except KeyError:
     password = None
 ##
 async def login_async():
+    await login_async()
     await client.login(email=email, password=password)
+    await client.close()
     print("login thành công")
 
 async def get_player_data(tag):
@@ -106,6 +108,4 @@ def update_database():
     print("Đã cập nhật thành công!")
 
 if __name__ == "__main__":
-    asyncio.run(login_async())
     update_database()
-    asyncio.run(client.close())
