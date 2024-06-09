@@ -3,11 +3,16 @@ name: run main.py
 on:
   schedule:
     - cron: '*/2 * * * *' # 5 phút 1 lần
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: setup python
         uses: actions/setup-python@v4
