@@ -21,11 +21,11 @@ except KeyError:
 
 async def login_async():
     await client.login(email=email, password=password)
+    print("login thành công")
 
 async def get_player_data(tag):
-    await login_async()
+    print(f"Đang lấy người chơi {tag}")
     player_data = await client.get_player(tag)
-    await client.close()
     return player_data
 
 try:
@@ -112,4 +112,6 @@ def update_database():
     print("Đã cập nhật thành công!")
 
 if __name__ == "__main__":
+    asyncio.run(login_async())
     update_database()
+    asyncio.run(client.close())
