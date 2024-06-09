@@ -9,9 +9,12 @@ import json
 
 
 try:
-    json_private_key = json.loads(os.environ["JSON_PRIVATE_KEY"])
+    json_private_key = os.environ["JSON_PRIVATE_KEY"]
 except KeyError:
     json_private_key = None
+
+print(json_private_key)
+json_private_key = json.loads(json_private_key)
 
 cred = credentials.Certificate(json_private_key)
 
