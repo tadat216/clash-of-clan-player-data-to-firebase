@@ -7,8 +7,9 @@ from firebase_admin import storage
 import os
 import json
 
+
 try:
-    json_private_key = json.load(os.environ["JSON_PRIVATE_KEY"])
+    json_private_key = json.loads(os.environ["JSON_PRIVATE_KEY"])
 except KeyError:
     json_private_key = None
 
