@@ -6,7 +6,27 @@ from firebase_admin import firestore
 from firebase_admin import storage
 import os
 import json
+import coc
+import asyncio
 
+try:
+    email = os.environ["SECRET_EMAIL"]
+except KeyError:
+    email = None
+
+try:
+    password = os.environ["SECRET_PASS"]
+except KeyError:
+    password = None
+
+async def login_async():
+    await client.login(email=email, password=password)
+
+async def get_player_data(tag):
+    await login_async()
+    player_data = await client.get_player(tag)
+    await client.close()
+    return player_data
 
 try:
     json_private_key = os.environ["JSON_PRIVATE_KEY"]
@@ -19,6 +39,8 @@ cred = credentials.Certificate(json_private_key)
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
+
+client = coc.Client()
 
 class Player:
     def __init__(self, tag:str, name:str, trophies:int, league:str, time_stamp:datetime):
@@ -43,25 +65,15 @@ class Player:
             self.league,
             self.time_stamp
         )
-try:
-    token = os.environ["TOKEN"]
-except:
-    token = None
 
-headers = {
-    "Accept" : "application/json",
-    "authorization" : f"Bearer {token}"
-}
-
-def get_player_data(tag):
-    url = f"https://api.clashofclans.com/v1/players/%23{tag}"
-    response = requests.get(url, headers=headers) 
-    return response.json()
+async def get_player_data(tag):
+    data = await client.get_player(tag)
+    return data
 
 def add_player_data_to_firebase(tag:str):
-    p = get_player_data(tag)
-    print(p)
-    player = Player(p["tag"], p["name"], p["trophies"], p["league"]["name"], datetime.now())
+    p =  asyncio.run(get_player_data(tag))
+    print(p.tag)
+    player = Player(p.tag, p.name, p.trophies, p.league, datetime.now())
     doc_ref = db.collection('players').document(player.tag)
     doc = doc_ref.get()
    
@@ -89,6 +101,7 @@ def add_player_data_to_firebase(tag:str):
         })
 
 def update_database():
+    asyncio.run(login_async())
     doc_ref = db.collection('player_tag').document('data')
     doc = doc_ref.get()
     data = doc.to_dict()

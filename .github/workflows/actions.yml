@@ -21,7 +21,7 @@ jobs:
           python-version: '3.11' # install the python version needed
 
       - name: print secret
-        run: echo "sercet is ${{ secrets.JSON_PRIVATE_KEY }}"
+        run: echo "sercet is ${{ secrets.EMAIL }}"
 
       - name: install python packages
         run: |
