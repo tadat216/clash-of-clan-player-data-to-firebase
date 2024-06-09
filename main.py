@@ -66,10 +66,6 @@ class Player:
             self.time_stamp
         )
 
-async def get_player_data(tag):
-    data = await client.get_player(tag)
-    return data
-
 def add_player_data_to_firebase(tag:str):
     p =  asyncio.run(get_player_data(tag))
     player = Player(p.tag, p.name, p.trophies, p.league, datetime.now())
