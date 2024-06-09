@@ -14,7 +14,7 @@ except KeyError:
     json_private_key = None
 
 print("ok")
-print(json_private_key)
+print(type(json_private_key), json_private_key)
 json_private_key = json.loads(json_private_key)
 
 cred = credentials.Certificate(json_private_key)
