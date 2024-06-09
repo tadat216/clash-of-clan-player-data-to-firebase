@@ -72,7 +72,6 @@ async def get_player_data(tag):
 
 def add_player_data_to_firebase(tag:str):
     p =  asyncio.run(get_player_data(tag))
-    print(p.tag)
     player = Player(p.tag, p.name, p.trophies, p.league, datetime.now())
     doc_ref = db.collection('players').document(player.tag)
     doc = doc_ref.get()
@@ -101,7 +100,6 @@ def add_player_data_to_firebase(tag:str):
         })
 
 def update_database():
-    asyncio.run(login_async())
     doc_ref = db.collection('player_tag').document('data')
     doc = doc_ref.get()
     data = doc.to_dict()
