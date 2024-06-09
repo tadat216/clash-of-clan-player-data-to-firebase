@@ -20,14 +20,13 @@ except KeyError:
     password = None
 ##
 async def login_async():
-    await login_async()
     await client.login(email=email, password=password)
-    await client.close()
-    print("login thành công")
 
 async def get_player_data(tag):
     print(f"Đang lấy người chơi {tag}")
+    await login_async()
     player_data = await client.get_player(tag)
+    await client.close()
     return player_data
 
 try:
@@ -68,8 +67,8 @@ class Player:
             self.time_stamp
         )
 
-def add_player_data_to_firebase(tag:str):
-    p =  asyncio.run(get_player_data(tag))
+async def add_player_data_to_firebase(tag:str):
+    p =  await get_player_data(tag)
     player = Player(p.tag, p.name, p.trophies, p.league, datetime.now())
     doc_ref = db.collection('players').document(player.tag)
     doc = doc_ref.get()
