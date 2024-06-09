@@ -13,6 +13,7 @@ try:
 except KeyError:
     json_private_key = None
 
+print("ok")
 print(json_private_key)
 json_private_key = json.loads(json_private_key)
 
