@@ -69,7 +69,7 @@ class Player:
 
 async def add_player_data_to_firebase(tag:str):
     p =  await get_player_data(tag)
-    player = Player(p.tag, p.name, p.trophies, p.league, datetime.now())
+    player = Player(p.tag, p.name, p.trophies, p.league.name, datetime.now())
     doc_ref = db.collection('players').document(player.tag)
     doc = doc_ref.get()
    
