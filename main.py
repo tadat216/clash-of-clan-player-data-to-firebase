@@ -96,14 +96,14 @@ async def add_player_data_to_firebase(tag:str):
             'time_stamps' : [player.time_stamp]
         })
 
-def update_database():
+async def update_database():
     doc_ref = db.collection('player_tag').document('data')
     doc = doc_ref.get()
     data = doc.to_dict()
     tags = data.get('tags', [])
     print(tags)
     for tag in tags:
-        add_player_data_to_firebase(tag)
+        await add_player_data_to_firebase(tag)
     print("Đã cập nhật thành công!")
 
 if __name__ == "__main__":
