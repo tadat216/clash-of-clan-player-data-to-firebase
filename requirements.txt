@@ -1,0 +1,2 @@
+firebase_admin==6.5.0
+Requests==2.32.3
