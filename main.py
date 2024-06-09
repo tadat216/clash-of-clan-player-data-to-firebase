@@ -13,9 +13,7 @@ try:
 except KeyError:
     json_private_key = None
 
-print("ok")
-print(type(json_private_key), "JSON_PRIVATE_KEY: ", json_private_key)
-json_private_key = json.loads(json_private_key)
+json_private_key = json.loads(json_private_key.strip())
 
 cred = credentials.Certificate(json_private_key)
 
