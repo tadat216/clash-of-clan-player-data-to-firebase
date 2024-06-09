@@ -59,7 +59,6 @@ def get_player_data(tag):
     return response.json()
 
 def add_player_data_to_firebase(tag:str):
-
     p = get_player_data(tag)
     player = Player(p["tag"], p["name"], p["trophies"], p["league"]["name"], datetime.now())
     doc_ref = db.collection('players').document(player.tag)
@@ -93,6 +92,7 @@ def update_database():
     doc = doc_ref.get()
     data = doc.to_dict()
     tags = data.get('tags', [])
+    print(tags)
     for tag in tags:
         add_player_data_to_firebase(tag)
     print("Đã cập nhật thành công!")
