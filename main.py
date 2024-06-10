@@ -23,7 +23,6 @@ async def login_async():
     await client.login(email=email, password=password)
 
 async def get_player_data(tag):
-    print(f"Đang lấy người chơi {tag}")
     await login_async()
     player_data = await client.get_player(tag)
     await client.close()
@@ -101,10 +100,8 @@ async def update_database():
     doc = doc_ref.get()
     data = doc.to_dict()
     tags = data.get('tags', [])
-    print(tags)
     for tag in tags:
         await add_player_data_to_firebase(tag)
-    print("Đã cập nhật thành công!")
 
 if __name__ == "__main__":
     asyncio.run(update_database())
