@@ -2,7 +2,7 @@ name: run main.py
 
 on:
   schedule:
-    - cron: '0 */12 * * *' # 12 tiếng 1 lần
+    - cron: '0 */8 * * *' # 8 tiếng 1 lần
   push:
     branches:
       - main
