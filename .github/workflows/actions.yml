@@ -2,15 +2,12 @@ name: run main.py
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # 6 tiếng 1 lần
+    - cron: '*/5 * * * *' # 6 tiếng 1 lần
   push:
     branches:
       - main
   workflow_dispatch:
-
-env:
-  TZ: Asia/Ho_Chi_Minh
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest
