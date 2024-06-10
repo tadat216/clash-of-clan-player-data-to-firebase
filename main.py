@@ -23,9 +23,7 @@ async def login_async():
     await client.login(email=email, password=password)
 
 async def get_player_data(tag):
-    await login_async()
     player_data = await client.get_player(tag)
-    await client.close()
     return player_data
 
 try:
@@ -96,12 +94,14 @@ async def add_player_data_to_firebase(tag:str):
         })
 
 async def update_database():
+    await login_async()
     doc_ref = db.collection('player_tag').document('data')
     doc = doc_ref.get()
     data = doc.to_dict()
     tags = data.get('tags', [])
     for tag in tags:
         await add_player_data_to_firebase(tag)
+    await client.close()
 
 if __name__ == "__main__":
     asyncio.run(update_database())
