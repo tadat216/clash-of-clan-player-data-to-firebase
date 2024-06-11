@@ -86,7 +86,7 @@ async def update_database():
     colection = db.collection('player_tag')
     tags = [doc.id for doc in colection.stream()]
     for tag in tags:
-        asyncio.run(add_player_data_to_firebase(tag, colection.document(tag)))
+        await add_player_data_to_firebase(tag, colection.document(tag))
     await client.close()
 
 if __name__ == "__main__":
