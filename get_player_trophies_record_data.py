@@ -6,9 +6,6 @@ from firebase_admin import firestore
 from firebase_admin import storage
 import os
 
-# for key, value in os.environ.items():
-#     print(f'{key}: {value}')
-#
 try:
     json_private_key = os.environ["JSON_PRIVATE_KEY"]
 except KeyError:
