@@ -40,30 +40,6 @@ db = firestore.client()
 
 client = coc.Client()
 
-class Player:
-    def __init__(self, tag:str, name:str, trophies:int, league:str, time_stamp:datetime):
-        self.tag = tag
-        self.name = name
-        self.trophies = trophies
-        self.league = league
-        self.time_stamp = time_stamp
-
-    def to_dict(self):
-        return {
-            'tag' : self.tag,
-            'name' : self.name,
-            'trophies' : self.trophies,
-            'league' : self.league,
-            'time_stamp' : self.time_stamp.isoformat()
-        }
-
-    def to_data_tuple(self):
-        return (
-            self.trophies,
-            self.league,
-            self.time_stamp
-        )
-
 async def add_player_data_to_firebase(tag:str, ref):
     p =  await get_player_data(tag)
     player_data = ref.get().to_dict()
@@ -80,6 +56,7 @@ async def add_player_data_to_firebase(tag:str, ref):
         trophies_col = db.collection('trophies_data')
         time_stamp, new_ref = trophies_col.add(new_data)
         trophies_ref_last.update({'next_ref' : new_ref})
+        ref.update({'trophies_ref_last' : new_ref})
 
 async def update_database():
     await login_async()
