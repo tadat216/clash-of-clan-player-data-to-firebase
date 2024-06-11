@@ -64,8 +64,8 @@ class Player:
             self.time_stamp
         )
 
-def add_player_data_to_firebase(tag:str, ref):
-    p =  asyncio.run(get_player_data(tag))
+async def add_player_data_to_firebase(tag:str, ref):
+    p =  await get_player_data(tag)
     player_data = ref.get().to_dict()
     trophies_ref_last = player_data['trophies_ref_last']
     doc_last = trophies_ref_last.get().to_dict()
