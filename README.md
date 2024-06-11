@@ -1,3 +1,3 @@
-# clash_of_clan_trophies_chart
+# CLASH OF CLAN PLAYER DATA TO FIREBASE
 
 This code use for get data from player and upload to firebase
