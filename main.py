@@ -8,10 +8,6 @@ import os
 import json
 import coc
 import asyncio
-import logging
-
-logging.basicConfig(filename='firebase_update.log', level=logging.INFO,
-                    format='%(asctime)s:%(levelname)s:%(message)s')
 
 try:
     email = os.environ["SECRET_EMAIL"]
@@ -84,7 +80,6 @@ async def add_player_data_to_firebase(tag:str, ref):
         trophies_col = db.collection('trophies_data')
         time_stamp, new_ref = trophies_col.add(new_data)
         trophies_ref_last.update({'next_ref' : new_ref})
-        logging.info(f'Thêm thành công cho người chơi {tag} với {p.trophies} trophies')
 
 async def update_database():
     await login_async()
