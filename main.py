@@ -82,12 +82,12 @@ def add_player_data_to_firebase(tag:str, ref):
         trophies_ref_last.update({'next_ref' : new_ref})
 
 async def update_database():
-    asyncio.run(login_async())
+    await login_async()
     colection = db.collection('player_tag')
     tags = [doc.id for doc in colection.stream()]
     for tag in tags:
         asyncio.run(add_player_data_to_firebase(tag, colection.document(tag)))
-    asyncio.run(client.close())
+    await client.close()
 
 if __name__ == "__main__":
     asyncio.run(update_database())
