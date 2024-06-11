@@ -64,29 +64,43 @@ class Player:
             self.time_stamp
         )
 
-async def add_player_data_to_firebase(tag:str, ref):
+async def add_player_data_to_firebase(tag:str):
     p =  await get_player_data(tag)
-    player_data = ref.get().to_dict()
-    trophies_ref_last = player_data['trophies_ref_last']
-    doc_last = trophies_ref_last.get().to_dict()
-    if doc_last['trophies'] != p['trophies']:
-        new_data = {
-            'trophies' : p['trophies'],
-            'player_ref' : ref, 
-            'next_ref' : None,
-            'prev_ref' : trophies_ref_last,
-            'time_stamp' : datetime.now().isoformat()
-        }
-        trophies_col = db.collection('trophies_data')
-        time_stamp, new_ref = trophies_col.add(new_data)
-        trophies_ref_last.update({'next_ref' : new_ref})
+    player = Player(p.tag, p.name, p.trophies, p.league.name, datetime.now())
+    doc_ref = db.collection('players').document(player.tag)
+    doc = doc_ref.get()
+   
+    if doc.exists:
+        data = doc.to_dict()
+        trophies = data.get('trophies', [])
+        
+        if trophies[-1] != player.trophies:
+            leagues = data.get('leagues', [])
+            leagues.append(player.league)
+            time_stamps = data.get('time_stamps', [])
+            trophies.append(player.trophies)
+            time_stamps.append(player.time_stamp)
+            doc_ref.update({
+                'trophies' : trophies,
+                'leagues' : leagues,
+                'time_stamps' : time_stamps
+            })
+    else:
+        doc_ref.set({
+            'name':player.name,
+            'trophies' : [player.trophies],
+            'leagues' : [player.league],
+            'time_stamps' : [player.time_stamp]
+        })
 
 async def update_database():
     await login_async()
-    colection = db.collection('player_tag')
-    tags = [doc.id for doc in colection.stream()]
+    doc_ref = db.collection('player_tag').document('data')
+    doc = doc_ref.get()
+    data = doc.to_dict()
+    tags = data.get('tags', [])
     for tag in tags:
-        add_player_data_to_firebase(tag, colection.document(tag))
+        await add_player_data_to_firebase(tag)
     await client.close()
 
 if __name__ == "__main__":
