@@ -64,8 +64,8 @@ class Player:
             self.time_stamp
         )
 
-async def add_player_data_to_firebase(tag:str, ref):
-    p =  await get_player_data(tag)
+def add_player_data_to_firebase(tag:str, ref):
+    p =  asyncio.run(get_player_data(tag))
     player_data = ref.get().to_dict()
     trophies_ref_last = player_data['trophies_ref_last']
     doc_last = trophies_ref_last.get().to_dict()
@@ -82,12 +82,12 @@ async def add_player_data_to_firebase(tag:str, ref):
         trophies_ref_last.update({'next_ref' : new_ref})
 
 async def update_database():
-    await login_async()
+    asyncio.run(login_async())
     colection = db.collection('player_tag')
     tags = [doc.id for doc in colection.stream()]
     for tag in tags:
-        await add_player_data_to_firebase(tag, colection.document(tag))
-    await client.close()
+        asyncio.run(add_player_data_to_firebase(tag, colection.document(tag)))
+    asyncio.run(client.close())
 
 if __name__ == "__main__":
     asyncio.run(update_database())
