@@ -69,9 +69,9 @@ async def add_player_data_to_firebase(tag:str, ref):
     player_data = ref.get().to_dict()
     trophies_ref_last = player_data['trophies_ref_last']
     doc_last = trophies_ref_last.get().to_dict()
-    if doc_last['trophies'] != p['trophies']:
+    if doc_last['trophies'] != p.trophies:
         new_data = {
-            'trophies' : p['trophies'],
+            'trophies' : p.trophies,
             'player_ref' : ref, 
             'next_ref' : None,
             'prev_ref' : trophies_ref_last,
