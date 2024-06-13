@@ -6,8 +6,9 @@ from firebase_admin import firestore
 from firebase_admin import storage
 import os
 import json
-import coc
-import asyncio
+
+api_url = 'https://developer.clashofclans.com/api/'
+api_token = None
 
 try:
     email = os.environ["SECRET_EMAIL"]
@@ -19,12 +20,22 @@ try:
 except KeyError:
     password = None
 
-async def login_async():
-    await client.login(email=email, password=password)
+login_payload = {
+    "email": email,
+    "password": password
+}
 
-async def get_player_data(tag):
-    player_data = await client.get_player(tag)
-    return player_data
+session = requests.Session()
+login_response = session.post(api_url+'login', json=login_payload)
+api_token = login_response.json().get('temporaryAPIToken')
+headers = {
+        "authorization": f"Bearer {api_token}",
+        "Accept": "application/json"
+}
+
+def get_player_data(tag:str):
+    player_data = requests.get(f'https://api.clashofclans.com/v1/players/%23{tag}', headers=headers)
+    return player_data.json()
 
 try:
     json_private_key = os.environ["JSON_PRIVATE_KEY"]
@@ -38,16 +49,14 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-client = coc.Client()
-
-async def add_player_data_to_firebase(tag:str, ref):
-    p =  await get_player_data(tag)
+def add_player_data_to_firebase(tag:str, ref):
+    p =  get_player_data(tag)
     player_data = ref.get().to_dict()
     trophies_ref_last = player_data['trophies_ref_last']
     doc_last = trophies_ref_last.get().to_dict()
-    if doc_last['trophies'] != p.trophies:
+    if doc_last['trophies'] != p['trophies']:
         new_data = {
-            'trophies' : p.trophies,
+            'trophies' : p['trophies'],
             'player_ref' : ref, 
             'next_ref' : None,
             'prev_ref' : trophies_ref_last,
@@ -58,13 +67,11 @@ async def add_player_data_to_firebase(tag:str, ref):
         trophies_ref_last.update({'next_ref' : new_ref})
         ref.update({'trophies_ref_last' : new_ref})
 
-async def update_database():
-    await login_async()
+def update_database():
     colection = db.collection('player_tag')
     tags = [doc.id for doc in colection.stream()]
     for tag in tags:
-        await add_player_data_to_firebase(tag, colection.document(tag))
-    await client.close()
+        add_player_data_to_firebase(tag, colection.document(tag))
 
 if __name__ == "__main__":
-    asyncio.run(update_database())
+    update_database()
