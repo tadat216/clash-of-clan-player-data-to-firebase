@@ -16,13 +16,18 @@ json_private_key = json.loads(json_private_key.strip())
 cred = credentials.Certificate(json_private_key)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
+tol = 0
 for doc in db.collection('player_tag').stream():
     player = doc.reference.get().to_dict()
     print(f"Chuỗi cúp của player {doc.id} {player['name']}")
     trophies = player['trophies_ref_first'].get().to_dict()
+    count = 1
     while 1:
         print(trophies['trophies'], end=' ')
         if trophies['next_ref'] == None:
             break
         trophies = trophies['next_ref'].get().to_dict()
-    print()
+        count += 1
+    print(f'({count})')
+    tol += count
+print(f'total data: {tol}')
